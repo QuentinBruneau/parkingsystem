@@ -10,6 +10,7 @@ public class Ticket {
     private double price;
     private Date inTime;
     private Date outTime;
+    private boolean alreadyCame;
 
     public int getId() {
         return id;
@@ -57,5 +58,13 @@ public class Ticket {
 
     public void setOutTime(Date outTime) {
         this.outTime = outTime;
+    }
+
+    public boolean isAlreadyCame() {
+        return alreadyCame;
+    }
+
+    public void setAlreadyCame(boolean alreadyCame) {
+        this.alreadyCame = alreadyCame;
     }
 }
