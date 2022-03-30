@@ -44,7 +44,7 @@ public class ParkingServiceTest {
 
     @Test
     public void processExitingVehicleTest() throws Exception {
-        //given [contexte du test] [mock à paramétrer] pas de paramètres
+
         Ticket t = new Ticket();
         t.setInTime(new Date());
         t.setOutTime(null);
@@ -54,10 +54,10 @@ public class ParkingServiceTest {
         when(ticketDAO.updateTicket(any())).thenReturn(true);
         when(parkingSpotDAO.updateParking(any())).thenReturn(true);
 
-        //when [ce qu'on veut tester] la méthode processExitingVehicle (faire sortir un véhicule présent dans le parking)
+
         parkingService.processExitingVehicle();
 
-        //then [résultat attendu] Une voiture est sortie (mise à jour de ticket/parking)
+
         verify(ticketDAO, times(1)).updateTicket(any());
         verify(parkingSpotDAO, times(1)).updateParking(any());
     }
@@ -65,7 +65,7 @@ public class ParkingServiceTest {
 
     @Test
     public void processExitingVehicleTestUpdateTicketFails() throws Exception {
-        //given [contexte du test] [mock à paramétrer] pas de paramètres
+
         Ticket t = new Ticket();
         t.setInTime(new Date());
         t.setOutTime(null);
@@ -74,34 +74,35 @@ public class ParkingServiceTest {
         when(ticketDAO.getTicket(any())).thenReturn(t);
         when(ticketDAO.updateTicket(any())).thenReturn(false);
 
-        //when [ce qu'on veut tester] la méthode processExitingVehicle (faire sortir un véhicule présent dans le parking)
+
+
         parkingService.processExitingVehicle();
 
-        //then [résultat attendu] Une voiture est sortie (mise à jour de ticket/parking)
+
         verify(ticketDAO, times(1)).updateTicket(any());
         verify(parkingSpotDAO, times(0)).updateParking(any());
     }
 
     @Test
     public void processExitingVehicleGetVehicleRegNumberFails() throws Exception {
-        //given [contexte du test] [mock à paramétrer] pas de paramètres
+
         Ticket t = new Ticket();
         t.setInTime(new Date());
         t.setOutTime(null);
         t.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenThrow(new Exception());
 
-        //when [ce qu'on veut tester] la méthode processExitingVehicle (faire sortir un véhicule présent dans le parking)
+
         parkingService.processExitingVehicle();
 
-        //then [résultat attendu] Une voiture est sortie (mise à jour de ticket/parking)
+
         verify(ticketDAO, times(0)).updateTicket(any());
         verify(parkingSpotDAO, times(0)).updateParking(any());
     }
 
     @Test
     public void processIncomingVehicle() throws Exception {
-        //given
+
         Ticket t = new Ticket();
         ParkingSpot parkingspot = new ParkingSpot(1, ParkingType.CAR, false);
         t.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
@@ -109,10 +110,10 @@ public class ParkingServiceTest {
         when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 
-        //when
+
         parkingService.processIncomingVehicle();
 
-        //then
+
 
         verify(ticketDAO, times(1)).saveTicket(any());
 
@@ -121,27 +122,27 @@ public class ParkingServiceTest {
 
     @Test
     public void processIncomingVehiclefail() throws Exception {
-        //given
+
         when(inputReaderUtil.readSelection()).thenReturn(1);
         when(parkingSpotDAO.getNextAvailableSlot(any())).thenReturn(1);
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenThrow(new Exception());
 
-        //when
+
         parkingService.processIncomingVehicle();
 
-        //then
+
         verify(ticketDAO, times(0)).saveTicket(any());
     }
 
     @Test
     public void getNextParkingNumberIfAvailableCar() {
-        //given
+
         when(inputReaderUtil.readSelection()).thenReturn(1);
         when(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).thenReturn(1);
 
-        //when
+
         ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
-        //then
+
         assertEquals(1, parkingSpot.getId());
         assertEquals(ParkingType.CAR, parkingSpot.getParkingType());
         assertTrue(parkingSpot.isAvailable());
@@ -149,22 +150,24 @@ public class ParkingServiceTest {
 
     @Test
     public void getNextParkingNumberIfAvailableBike() {
-        //given
+
         when(inputReaderUtil.readSelection()).thenReturn(2);
         when(parkingSpotDAO.getNextAvailableSlot(ParkingType.BIKE)).thenReturn(4);
 
-        //when
+
         ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
-        //then
+
         assertEquals(4, parkingSpot.getId());
         assertEquals(ParkingType.BIKE, parkingSpot.getParkingType());
         assertTrue(parkingSpot.isAvailable());
     }
+
     @Test
-    public void saveTicket(){
-//given
-        Ticket t = new Ticket();
+    public void getNextParkingNumberIfAvailableCarFailVehicleType() {
+        when(inputReaderUtil.readSelection()).thenReturn(3);
 
+        ParkingSpot parkingSpot = parkingService.getNextParkingNumberIfAvailable();
 
+        assertEquals(null,parkingSpot);
     }
 }
